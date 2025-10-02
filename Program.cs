@@ -1,3 +1,6 @@
+using MINIMAL_API.Dominio.DTOs;
+using System.Diagnostics.Eventing.Reader;
+
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
@@ -7,8 +10,11 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.MapGet("/", () => "Hello World!");
-
-
+app.MapPost("/login", (LoginDTO loginDTO) =>
+{
+    if (loginDTO.Email == "admin" && loginDTO.Senha == "password")
+        return Results.Ok("Login com sucesso");
+    else return Results.Unauthorized();
+});
 
 app.Run();
