@@ -1,4 +1,5 @@
-﻿using MINIMAL_API.Dominio.Entidades;
+﻿using MINIMAL_API.Dominio.DTOs;
+using MINIMAL_API.Dominio.Entidades;
 using MINIMAL_API.Dominio.Interfaces;
 using MINIMAL_API.Infraestrutura.Db;
 
@@ -34,6 +35,7 @@ namespace MINIMAL_API.Dominio.Service
             _contexto.Veiculos.Add(veiculo);
             _contexto.SaveChanges();
         }
+
 
         public List<Veiculo> Todos(int pagina, string? nome = null, string? marca = null)
         {
