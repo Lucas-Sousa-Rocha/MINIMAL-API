@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore;       // EF Core (ORM para acesso ao banco)
 using MINIMAL_API.Dominio.DTOs;            // Importa os DTOs (Data Transfer Objects)
 using MINIMAL_API.Dominio.Interfaces;      // Interfaces dos serviços
 using MINIMAL_API.Dominio.Service;         // Implementações dos serviços
-using MINIMAL_API.Infraestrutura.Db;       // DbContext (configuração do banco)
+using MINIMAL_API.Infraestrutura.Db;
+using MINIMAL_API.ModelViews;       // DbContext (configuração do banco)
 
 // ===== Criar o builder da aplicação =====
 var builder = WebApplication.CreateBuilder(args);
@@ -74,6 +75,8 @@ app.MapGet("/teste-db", async (DbContexto db) =>
     else
         return Results.Problem("Não foi possível conectar ao banco."); // Retorna erro 500
 });
+
+app.MapGet("/", () => Results.Json(new Home()));
 
 // ===== Habilitar Swagger =====
 app.UseSwagger();    // Disponibiliza o endpoint JSON do Swagger
