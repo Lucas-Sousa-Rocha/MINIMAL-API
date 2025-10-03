@@ -21,10 +21,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Dominio\Entidades\" />
-    <Folder Include="Dominio\Service\" />
-    <Folder Include="Infraestrutura\" />
-  </ItemGroup>
-
 </Project>
