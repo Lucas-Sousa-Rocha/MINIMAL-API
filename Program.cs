@@ -6,7 +6,7 @@ using MINIMAL_API.Dominio.Entidades;
 using MINIMAL_API.Dominio.Interfaces;      // Interfaces dos serviços
 using MINIMAL_API.Dominio.Service;         // Implementações dos serviços
 using MINIMAL_API.Infraestrutura.Db;
-using MINIMAL_API.ModelViews;       // DbContext (configuração do banco)
+using MINIMAL_API.Validator;
 
 // ===== Criar o builder da aplicação =====
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 // ===== Registrar serviços (injeção de dependência) =====
 builder.Services.AddScoped<IAdministrador, AdministradorService>();  // Sempre que for pedido IAdministrador → usa AdministradorService
 builder.Services.AddScoped<IVeiculo, VeiculoService>();              // Sempre que for pedido IVeiculo → usa VeiculoService
+builder.Services.AddScoped<VeiculoValidador>();
 
 // ===== Configuração de documentação (Swagger/OpenAPI) =====
 builder.Services.AddEndpointsApiExplorer(); // Necessário para mapear os endpoints minimalistas
@@ -80,30 +81,10 @@ app.MapGet("/teste-db", async (DbContexto db) =>
 // Endpoint POST /veiculos → cadastra um novo veículo
 app.MapPost("/veiculos", (HttpRequest request, VeiculoDTO veiculoDTO, IVeiculo VeiculoService) =>
 {
-    // Validação básica
-    if (veiculoDTO == null)
-        return Results.BadRequest("Veículo inválido.");
-
-    if (string.IsNullOrWhiteSpace(veiculoDTO.Nome) || string.IsNullOrWhiteSpace(veiculoDTO.Marca))
-        return Results.BadRequest("Nome e Marca são obrigatórios.");
-
-    // Validação e conversão da data
-    if (string.IsNullOrWhiteSpace(veiculoDTO.Data))
-        return Results.BadRequest("O campo Data é obrigatório.");
-
-    DateOnly dataVeiculo;
+    if (!DateOnly.TryParse(veiculoDTO.Data, out var dataVeiculo))
+        return Results.BadRequest("Data do veículo inválida. Use o formato YYYY-MM-DD.");
     try
     {
-        dataVeiculo = DateOnly.ParseExact(veiculoDTO.Data, "yyyy-MM-dd"); // Formato esperado: 2025-10-03
-    }
-    catch
-    {
-        return Results.BadRequest("Data inválida. Use o formato yyyy-MM-dd.");
-    }
-
-    try
-    {
-        // Converter DTO para entidade
         var veiculo = new Veiculo
         {
             Nome = veiculoDTO.Nome,
@@ -111,23 +92,57 @@ app.MapPost("/veiculos", (HttpRequest request, VeiculoDTO veiculoDTO, IVeiculo V
             Data = dataVeiculo
         };
 
-        // Salvar veículo
         VeiculoService.SalvarVeiculo(veiculo);
 
-        // Construir URL completa
         var urlCompleta = $"{request.Scheme}://{request.Host}/veiculos/{veiculo.Id}";
-
-        // Retornar 201 Created apenas com Location
         return Results.Created(urlCompleta, null);
+    }
+    catch (DuplicateWaitObjectException ex)
+    {
+        return Results.Conflict(ex.Message); // captura conflito de dados
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(ex.Message); // captura validação
     }
     catch (Exception ex)
     {
-        return Results.Problem($"Erro ao cadastrar veículo: {ex.Message}");
+        return Results.Problem($"Erro ao cadastrar veículo: {ex.Message}"); // captura erro inesperado
     }
 });
 
+app.MapGet("/veiculos/{id}", (int id, IVeiculo veiculoService) =>
+{
+    var veiculo = veiculoService.BuscaPorID(id);
+    if (veiculo == null)
+        return Results.NotFound();
 
+    var veiculoDTO = new VeiculoDTO
+    {
+        Nome = veiculo.Nome,
+        Marca = veiculo.Marca,
+        Data = veiculo.Data.ToString("dd-MM-yyyy")
+    };
 
+    return Results.Ok(veiculoDTO); // 200 OK com o DTO
+});
+
+app.MapDelete("/veiculos/{id}", (int id, IVeiculo veiculoService) =>
+{
+    try
+    {
+        veiculoService.DeletarVeiculo(id);
+        return Results.NoContent();
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.NotFound(ex.Message); // captura erro de não encontrado
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"Erro ao deletar veículo: {ex.Message}"); // captura erro inesperado
+    }
+});
 
 
 

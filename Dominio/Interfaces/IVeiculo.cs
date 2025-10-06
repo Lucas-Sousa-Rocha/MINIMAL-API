@@ -8,6 +8,6 @@ namespace MINIMAL_API.Dominio.Interfaces
         Veiculo? BuscaPorID(int id);
         void SalvarVeiculo(Veiculo veiculo);
         void AtualizarVeiculo(Veiculo veiculo);
-        void DeletarVeiculo(Veiculo veiculo);
+        void DeletarVeiculo(int id);
     }
 }

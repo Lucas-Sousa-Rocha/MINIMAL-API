@@ -2,15 +2,18 @@
 using MINIMAL_API.Dominio.Entidades;
 using MINIMAL_API.Dominio.Interfaces;
 using MINIMAL_API.Infraestrutura.Db;
+using MINIMAL_API.Validator;
 
 namespace MINIMAL_API.Dominio.Service
 {
     public class VeiculoService : IVeiculo
     {
         private readonly DbContexto _contexto;
-        public VeiculoService(DbContexto contexto)
+        private readonly VeiculoValidador _validador;
+        public VeiculoService(DbContexto contexto, VeiculoValidador validador)
         {
             _contexto = contexto;
+            _validador = validador;
         }
 
         public void AtualizarVeiculo(Veiculo veiculo)
@@ -24,14 +27,18 @@ namespace MINIMAL_API.Dominio.Service
             return _contexto.Veiculos.Where(v => v.Id == id).FirstOrDefault();
         }
 
-        public void DeletarVeiculo(Veiculo veiculo)
+        public void DeletarVeiculo(int id)
         {
+            var veiculo = BuscaPorID(id);
+            if (veiculo == null)
+                throw new ArgumentException("Veículo não encontrado.");
             _contexto.Veiculos.Remove(veiculo);
             _contexto.SaveChanges();
         }
 
         public void SalvarVeiculo(Veiculo veiculo)
         {
+            _validador.ValidarVeiculo(veiculo);
             _contexto.Veiculos.Add(veiculo);
             _contexto.SaveChanges();
         }
