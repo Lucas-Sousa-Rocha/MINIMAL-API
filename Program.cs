@@ -108,12 +108,11 @@ app.MapPost("/veiculos", (HttpRequest request, VeiculoDTO veiculoDTO, IVeiculo V
     }
 });
 
-app.MapGet("/veiculos/{id}", (int id, IVeiculo veiculoService) =>
+app.MapGet("/veiculos/{id}", ([FromRoute]int id, IVeiculo veiculoService) =>
 {
+    try 
+    { 
     var veiculo = veiculoService.BuscaPorID(id);
-    if (veiculo == null)
-        return Results.NotFound();
-
     var veiculoDTO = new VeiculoDTO
     {
         Nome = veiculo.Nome,
@@ -122,6 +121,15 @@ app.MapGet("/veiculos/{id}", (int id, IVeiculo veiculoService) =>
     };
 
     return Results.Ok(veiculoDTO); // 200 OK com o DTO
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return Results.NotFound(ex.Message); // captura erro de não encontrado
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"Erro ao buscar veículo: {ex.Message}"); // captura erro inesperado
+    }
 });
 
 app.MapGet("/veiculos", (int pagina, string? nome, string? marca, IVeiculo veiculoService) =>
@@ -140,7 +148,7 @@ app.MapGet("/veiculos", (int pagina, string? nome, string? marca, IVeiculo veicu
     return Results.Ok(veiculosDTO);
 });
 
-app.MapDelete("/veiculos/{id}", (int id, IVeiculo veiculoService) =>
+app.MapDelete("/veiculos/{id}", ([FromRoute]int id, IVeiculo veiculoService) =>
 {
     try
     {
@@ -155,6 +163,35 @@ app.MapDelete("/veiculos/{id}", (int id, IVeiculo veiculoService) =>
     {
         return Results.Problem($"Erro ao deletar veículo: {ex.Message}"); // captura erro inesperado
     }
+});
+
+app.MapPut("/veiculos/{id}", (int id, VeiculoDTO veiculoDTO, IVeiculo veiculoService) =>
+{
+    try
+    {
+        var veiculo = veiculoService.BuscaPorID(id);
+        veiculo.Nome = veiculoDTO.Nome;
+        veiculo.Marca = veiculoDTO.Marca;
+        if (DateOnly.TryParse(veiculoDTO.Data, out DateOnly dataConvertida))
+        {
+            veiculo.Data = dataConvertida;
+        }
+        else
+        {
+            return Results.BadRequest("Data inválida. Use o formato yyyy-MM-dd.");
+        }
+        veiculoService.AtualizarVeiculo(veiculo);
+        return Results.Ok(veiculo);
+    }
+    catch(DuplicateWaitObjectException ex)
+    {
+        return Results.Conflict(ex.Message);
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return Results.NotFound(ex.Message);
+    }
+
 });
 
 // ===== Habilitar Swagger =====

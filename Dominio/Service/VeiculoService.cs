@@ -18,13 +18,18 @@ namespace MINIMAL_API.Dominio.Service
 
         public void AtualizarVeiculo(Veiculo veiculo)
         {
+            _validador.ValidarVeiculo(veiculo);
             _contexto.Veiculos.Update(veiculo);
             _contexto.SaveChanges();
         }
-
-        public Veiculo? BuscaPorID(int id)
+        public Veiculo BuscaPorID(int id)
         {
-            return _contexto.Veiculos.Where(v => v.Id == id).FirstOrDefault();
+            var veiculo = _contexto.Veiculos.FirstOrDefault(v => v.Id == id);
+            if (veiculo == null)
+            {
+                throw new KeyNotFoundException($"Veículo com ID {id} não foi encontrado.");
+            }
+            return veiculo;
         }
 
         public void DeletarVeiculo(int id)
@@ -65,6 +70,5 @@ namespace MINIMAL_API.Dominio.Service
                 .Take(tamanhoPagina)
                 .ToList();
         }
-
     }
 }

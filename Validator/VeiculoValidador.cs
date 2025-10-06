@@ -23,13 +23,14 @@ namespace MINIMAL_API.Validator
                 throw new ArgumentException("A marca do veículo é obrigatória.");
 
             if (ExisteVeiculo(veiculo))
-                throw new DuplicateWaitObjectException("Veículo já cadastrado.");
+                throw new DuplicateWaitObjectException("Já existe um veículo com o mesmo nome e marca.");
         }
 
-        public bool ExisteVeiculo(Veiculo veiculo) 
+        public bool ExisteVeiculo(Veiculo veiculo)
         {
-            return _contexto.Veiculos.Any(v => v.Nome == veiculo.Nome && v.Marca == veiculo.Marca);
+            return _contexto.Veiculos.Any(v => v.Nome == veiculo.Nome && v.Marca == veiculo.Marca && v.Id != veiculo.Id);
         }
+
 
     }
 }
