@@ -46,7 +46,7 @@ namespace MINIMAL_API.Dominio.Service
 
         public List<Veiculo> Todos(int pagina, string? nome = null, string? marca = null)
         {
-            int tamanhoPagina = 10; // ou um parâmetro se quiser flexível
+            int tamanhoPagina = 10;
 
             var query = _contexto.Veiculos.AsQueryable();
 

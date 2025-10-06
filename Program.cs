@@ -60,7 +60,6 @@ if (app.Environment.IsDevelopment())
 
 // ===== Definição dos Endpoints =====
 
-// Endpoint POST /login → faz autenticação do administrador
 app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministrador AdministradorService) =>
 {
     if (AdministradorService.login(loginDTO) != null)
@@ -69,7 +68,6 @@ app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministra
         return Results.Unauthorized();            // Retorna 401 Unauthorized se inválido
 });
 
-// Endpoint GET /teste-db → verifica conexão com o banco via EF Core
 app.MapGet("/teste-db", async (DbContexto db) =>
 {
     if (await db.Database.CanConnectAsync())      // Verifica conexão de forma assíncrona
@@ -78,7 +76,6 @@ app.MapGet("/teste-db", async (DbContexto db) =>
         return Results.Problem("Não foi possível conectar ao banco."); // Retorna erro 500
 });
 
-// Endpoint POST /veiculos → cadastra um novo veículo
 app.MapPost("/veiculos", (HttpRequest request, VeiculoDTO veiculoDTO, IVeiculo VeiculoService) =>
 {
     if (!DateOnly.TryParse(veiculoDTO.Data, out var dataVeiculo))
@@ -127,6 +124,22 @@ app.MapGet("/veiculos/{id}", (int id, IVeiculo veiculoService) =>
     return Results.Ok(veiculoDTO); // 200 OK com o DTO
 });
 
+app.MapGet("/veiculos", (int pagina, string? nome, string? marca, IVeiculo veiculoService) =>
+{
+    pagina = pagina < 1 ? 1 : pagina;
+
+    var veiculos = veiculoService.Todos(pagina, nome, marca);
+
+    var veiculosDTO = veiculos.Select(v => new VeiculoDTO
+    {
+        Nome = v.Nome,
+        Marca = v.Marca,
+        Data = v.Data.ToString("yyyy-MM-dd")
+    }).ToList();
+
+    return Results.Ok(veiculosDTO);
+});
+
 app.MapDelete("/veiculos/{id}", (int id, IVeiculo veiculoService) =>
 {
     try
@@ -143,8 +156,6 @@ app.MapDelete("/veiculos/{id}", (int id, IVeiculo veiculoService) =>
         return Results.Problem($"Erro ao deletar veículo: {ex.Message}"); // captura erro inesperado
     }
 });
-
-
 
 // ===== Habilitar Swagger =====
 app.UseSwagger();    // Disponibiliza o endpoint JSON do Swagger
