@@ -8,5 +8,7 @@ namespace MINIMAL_API.Dominio.Interfaces
        Administrador? login(LoginDTO loginDTO);
        void SalvarAdministrador(Administrador administrador);
        void AtualizarAdministrador(Administrador administrador);
+       List<Administrador> Todos(int pagina, string? nome = null, string? perfil = null);
+       Administrador? BuscaPorID(int id);
     }
 }

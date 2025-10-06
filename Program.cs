@@ -108,6 +108,41 @@ app.MapPost("/administradores", ([FromBody] AdministradorDTO administradorDTO, I
     }
 });
 
+app.MapGet("/administradores/{id}", ([FromRoute] int id, IAdministrador AdministradorService) =>
+{
+    try
+    {
+        var administrador = AdministradorService.BuscaPorID(id);
+        var administradorResponseDTO = new AdministradorResponseDTO
+        {
+            Nome = administrador.Nome,
+            Email = administrador.Email,
+            Perfil = administrador.Perfil.ToString()
+        };
+        return Results.Ok(administradorResponseDTO); // 200 OK com o DTO
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return Results.NotFound(ex.Message); // captura erro de não encontrado
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"Erro ao buscar administrador: {ex.Message}"); // captura erro inesperado
+    }
+});
+
+app.MapGet("/administradores", (int pagina, string? nome, string? perfil, IAdministrador AdministradorService) =>
+{
+    pagina = pagina < 1 ? 1 : pagina;
+    var administradores = AdministradorService.Todos(pagina, nome, perfil);
+    var administradoresDTO = administradores.Select(a => new AdministradorResponseDTO
+    {
+        Nome = a.Nome,
+        Email = a.Email,
+        Perfil = a.Perfil.ToString()
+    }).ToList();
+    return Results.Ok(administradoresDTO);
+});
 
 app.MapGet("/teste-db", async (DbContexto db) =>
 {
