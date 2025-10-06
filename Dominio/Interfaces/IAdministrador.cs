@@ -6,5 +6,7 @@ namespace MINIMAL_API.Dominio.Interfaces
     public interface IAdministrador
     {
        Administrador? login(LoginDTO loginDTO);
+       void SalvarAdministrador(Administrador administrador);
+       void AtualizarAdministrador(Administrador administrador);
     }
 }

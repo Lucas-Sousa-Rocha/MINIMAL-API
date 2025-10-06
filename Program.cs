@@ -5,6 +5,7 @@ using MINIMAL_API.Dominio.DTOs;            // Importa os DTOs (Data Transfer Obj
 using MINIMAL_API.Dominio.Entidades;
 using MINIMAL_API.Dominio.Interfaces;      // Interfaces dos serviços
 using MINIMAL_API.Dominio.Service;         // Implementações dos serviços
+using MINIMAL_API.Enums;
 using MINIMAL_API.Infraestrutura.Db;
 using MINIMAL_API.Validator;
 
@@ -15,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IAdministrador, AdministradorService>();  // Sempre que for pedido IAdministrador → usa AdministradorService
 builder.Services.AddScoped<IVeiculo, VeiculoService>();              // Sempre que for pedido IVeiculo → usa VeiculoService
 builder.Services.AddScoped<VeiculoValidador>();
+builder.Services.AddScoped<AdministradorValidator>();
 
 // ===== Configuração de documentação (Swagger/OpenAPI) =====
 builder.Services.AddEndpointsApiExplorer(); // Necessário para mapear os endpoints minimalistas
@@ -59,7 +61,6 @@ if (app.Environment.IsDevelopment())
 }
 
 // ===== Definição dos Endpoints =====
-
 app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministrador AdministradorService) =>
 {
     if (AdministradorService.login(loginDTO) != null)
@@ -67,6 +68,46 @@ app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministra
     else
         return Results.Unauthorized();            // Retorna 401 Unauthorized se inválido
 });
+
+app.MapPost("/administradores", ([FromBody] AdministradorDTO administradorDTO, IAdministrador AdministradorService) =>
+{
+    try
+    {
+        // Converte a string recebida em enum, ignorando maiúsculas/minúsculas
+        if (!Enum.TryParse<Perfil>(administradorDTO.Perfil, true, out var perfilEnum))
+        {
+            return Results.BadRequest("Perfil inválido. Valores permitidos: ADMIN,USER.");
+        }
+
+        var administrador = new Administrador
+        {
+            Nome = administradorDTO.Nome,
+            Email = administradorDTO.Email,
+            Senha = administradorDTO.Senha,
+            Perfil = perfilEnum
+        };
+
+        AdministradorService.SalvarAdministrador(administrador);
+
+        return Results.Created($"/administradores/{administrador.Id}", administrador);
+    }
+    catch (DuplicateWaitObjectException ex)
+    {
+        // Caso o administrador já exista
+        return Results.Conflict(ex.Message);
+    }
+    catch (ArgumentException ex)
+    {
+        // Erros de validação (dados inválidos)
+        return Results.BadRequest(ex.Message);
+    }
+    catch (Exception ex)
+    {
+        // Erros inesperados
+        return Results.Problem($"Erro ao cadastrar administrador: {ex.Message}");
+    }
+});
+
 
 app.MapGet("/teste-db", async (DbContexto db) =>
 {

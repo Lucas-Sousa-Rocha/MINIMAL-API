@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MINIMAL_API.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -20,7 +21,7 @@ namespace MINIMAL_API.Dominio.Entidades
         public string Senha { get; set; } = default!;
         [Required]
         [MaxLength(10)]
-        public string Perfil { get; set; } = default!;
+        public Perfil Perfil { get; set; } = default!;
         [Required]
         [Column(TypeName = "date")]
         public DateTime DataCriacao { get; set; }

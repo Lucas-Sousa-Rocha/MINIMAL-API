@@ -43,7 +43,7 @@ namespace MINIMAL_API.Infraestrutura.Db
                     Nome = "Admin",
                     Email = "admin@mail.com",
                     Senha = "123456",
-                    Perfil = "Admin",
+                    Perfil = Enums.Perfil.ADMIN,
                 }
                 );
         }
