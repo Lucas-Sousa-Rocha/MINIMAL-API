@@ -41,7 +41,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ADMIN", policy => policy.RequireRole(Perfil.ADMIN.ToString()));
+    options.AddPolicy("USER", policy => policy.RequireRole(Perfil.USER.ToString()));
+});
 
 // ===== Registrar serviços =====
 builder.Services.AddScoped<IAdministrador, AdministradorService>();
@@ -201,7 +205,7 @@ app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO,IAdministrad
     {
         return Results.Problem($"Erro ao realizar login: {ex.Message}");
     }
-});
+}).AllowAnonymous().WithTags("Administrador");
 
 // --- Criar administrador ---
 app.MapPost("/administradores", ([FromBody] AdministradorDTO administradorDTO, IAdministrador AdministradorService) =>
@@ -236,7 +240,7 @@ app.MapPost("/administradores", ([FromBody] AdministradorDTO administradorDTO, I
     catch (DuplicateWaitObjectException ex) { return Results.Conflict(ex.Message); }
     catch (ArgumentException ex) { return Results.BadRequest(ex.Message); }
     catch (Exception ex) { return Results.Problem($"Erro ao cadastrar administrador: {ex.Message}"); }
-}).RequireAuthorization();
+}).RequireAuthorization("ADMIN").WithTags("Administrador");
 
 // --- Buscar administrador por ID ---
 app.MapGet("/administradores/{id}", ([FromRoute] int id, IAdministrador AdministradorService) =>
@@ -254,7 +258,7 @@ app.MapGet("/administradores/{id}", ([FromRoute] int id, IAdministrador Administ
     }
     catch (KeyNotFoundException ex) { return Results.NotFound(ex.Message); }
     catch (Exception ex) { return Results.Problem($"Erro ao buscar administrador: {ex.Message}"); }
-}).RequireAuthorization();
+}).RequireAuthorization("ADMIN").WithTags("Administrador");
 
 // --- Listar administradores com paginação e total ---
 app.MapGet("/administradores", (int pagina, string? nome, string? perfil, IAdministrador AdministradorService) =>
@@ -272,7 +276,7 @@ app.MapGet("/administradores", (int pagina, string? nome, string? perfil, IAdmin
     }).ToList();
 
     return Results.Ok(new { Total = total, Itens = dto });
-}).RequireAuthorization();
+}).RequireAuthorization("ADMIN").WithTags("Administrador");
 
 // ===== Veículos =====
 
@@ -297,7 +301,7 @@ app.MapPost("/veiculos", (HttpRequest request, VeiculoDTO veiculoDTO, IVeiculo V
     catch (DuplicateWaitObjectException ex) { return Results.Conflict(ex.Message); }
     catch (ArgumentException ex) { return Results.BadRequest(ex.Message); }
     catch (Exception ex) { return Results.Problem($"Erro ao cadastrar veículo: {ex.Message}"); }
-}).RequireAuthorization();
+}).RequireAuthorization("USER").WithTags("Usuario");
 
 // --- Listar veículos com paginação ---
 app.MapGet("/veiculos", (int pagina, string? nome, string? marca, IVeiculo VeiculoService) =>
@@ -312,7 +316,7 @@ app.MapGet("/veiculos", (int pagina, string? nome, string? marca, IVeiculo Veicu
     }).ToList();
 
     return Results.Ok(veiculosDTO);
-}).RequireAuthorization();
+}).RequireAuthorization().WithTags("Usuario");
 
 // --- Buscar veículo por ID ---
 app.MapGet("/veiculos/{id}", ([FromRoute] int id, IVeiculo VeiculoService) =>
@@ -330,7 +334,7 @@ app.MapGet("/veiculos/{id}", ([FromRoute] int id, IVeiculo VeiculoService) =>
     }
     catch (KeyNotFoundException ex) { return Results.NotFound(ex.Message); }
     catch (Exception ex) { return Results.Problem($"Erro ao buscar veículo: {ex.Message}"); }
-}).RequireAuthorization();
+}).RequireAuthorization().WithTags("Usuario");
 
 // --- Atualizar veículo ---
 app.MapPut("/veiculos/{id}", (int id, VeiculoDTO veiculoDTO, IVeiculo VeiculoService) =>
@@ -351,7 +355,7 @@ app.MapPut("/veiculos/{id}", (int id, VeiculoDTO veiculoDTO, IVeiculo VeiculoSer
     catch (DuplicateWaitObjectException ex) { return Results.Conflict(ex.Message); }
     catch (KeyNotFoundException ex) { return Results.NotFound(ex.Message); }
     catch (Exception ex) { return Results.Problem($"Erro ao atualizar veículo: {ex.Message}"); }
-}).RequireAuthorization();
+}).RequireAuthorization("USER").WithTags("Usuario");
 
 // --- Deletar veículo ---
 app.MapDelete("/veiculos/{id}", ([FromRoute] int id, IVeiculo VeiculoService) =>
@@ -363,7 +367,7 @@ app.MapDelete("/veiculos/{id}", ([FromRoute] int id, IVeiculo VeiculoService) =>
     }
     catch (ArgumentException ex) { return Results.NotFound(ex.Message); }
     catch (Exception ex) { return Results.Problem($"Erro ao deletar veículo: {ex.Message}"); }
-}).RequireAuthorization();
+}).RequireAuthorization("USER").WithTags("Usuario");
 
 // ===== Executar a aplicação =====
 app.UseAuthentication();
