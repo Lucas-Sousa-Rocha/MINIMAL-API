@@ -58,7 +58,9 @@ Principais funcionalidades:
 
 ### 1️⃣ Clonar o repositório
 ```bash
-git clone <URL_DO_REPOSITORIO>
+git clone https://github.com/Lucas-Sousa-Rocha/MINIMAL-API
+```
+```bash
 cd MINIMAL-API
 ```
 
@@ -67,15 +69,23 @@ Defina sua string de conexão e as configurações do JWT:
 
 ```json
 {
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
   "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=MinimalAPI;Trusted_Connection=True;"
+    "DefaultConnection": "Server=localhost,1433;Database=REDACTED_DB_NAME;User Id=sa;Password=;TrustServerCertificate=True;MultipleActiveResultSets=True"
   },
   "Jwt": {
-    "Key": "SUA_CHAVE_SECRETA_MUITO_FORTE",
-    "Issuer": "SeuSistema",
-    "Audience": "SeuSistemaUsers",
+    "Key": "a-string-secret-at-least-256-bits-long",
+    "Issuer": "SeuIssuer",
+    "Audience": "SeuAudience",
     "ExpireMinutes": 60
   }
+
 }
 ```
 
@@ -104,7 +114,7 @@ dotnet MINIMAL-API.dll
 No ambiente de desenvolvimento, acesse:
 
 ```
-http://localhost:<PORTA>/swagger
+https://localhost:7088/swagger/index.html
 ```
 
 ---
@@ -188,4 +198,4 @@ Os testes estão na pasta `MINIMAL_API_TESTE` e utilizam as seguintes biblioteca
 ## 📜 Licença
 
 Este projeto está licenciado sob a licença MIT.  
-Consulte o arquivo [LICENSE](LICENSE) para mais informações.
+Consulte o arquivo [LICENSE](LICENSE.txt) para mais informações.
