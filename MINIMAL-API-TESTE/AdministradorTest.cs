@@ -26,5 +26,31 @@ namespace MINIMAL_API_TESTE
             Assert.Equal("password123", administrador.Senha);
             Assert.Equal(Perfil.ADMIN, administrador.Perfil);
         }
+
+        [Fact]
+        public void Deve_Verificar_Se_Perfil_E_Admin()
+        {
+            // Arrange
+            var administrador = new Administrador { Perfil = Perfil.ADMIN };
+
+            // Act
+            bool isAdmin = administrador.Perfil == Perfil.ADMIN;
+
+            // Assert
+            Assert.True(isAdmin);
+        }
+
+        [Fact]
+        public void Deve_Verificar_Se_Perfil_E_User()
+        {
+            // Arrange
+            var usuario = new Administrador { Perfil = Perfil.USER };
+
+            // Act
+            bool isUser = usuario.Perfil == Perfil.USER;
+
+            // Assert
+            Assert.True(isUser);
+        }
     }
 }

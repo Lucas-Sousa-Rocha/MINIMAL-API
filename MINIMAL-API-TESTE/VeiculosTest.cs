@@ -1,9 +1,5 @@
 ﻿using MINIMAL_API.Dominio.Entidades;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace MINIMAL_API_TESTE
@@ -11,21 +7,25 @@ namespace MINIMAL_API_TESTE
     public class VeiculosTest
     {
         [Fact]
-        public void VeiculosTeste() 
+        public void Deve_Criar_Veiculo_Com_Propriedades_Corretas()
         {
             // Arrange
-            var veiculo = new Veiculo();
+            var dataEsperada = DateOnly.FromDateTime(DateTime.Now);
+
             // Act
-            veiculo.Id = 1;
-            veiculo.Nome = "Carro Test";
-            veiculo.Marca = "Marca Test";
-            veiculo.Data = DateOnly.FromDateTime(DateTime.Now);
+            var veiculo = new Veiculo
+            {
+                Id = 1,
+                Nome = "Carro Test",
+                Marca = "Marca Test",
+                Data = dataEsperada
+            };
+
             // Assert
             Assert.Equal(1, veiculo.Id);
             Assert.Equal("Carro Test", veiculo.Nome);
             Assert.Equal("Marca Test", veiculo.Marca);
-            Assert.Equal(DateOnly.FromDateTime(DateTime.Now), veiculo.Data);
-
+            Assert.Equal(dataEsperada, veiculo.Data);
         }
     }
 }

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MINIMAL-API-TESTE")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d0d0e98f0c9c14d44323de0846808f00d91751bc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d2559ddfb5001daaab3a10b8b7941d06c1bd02fe")]
 [assembly: System.Reflection.AssemblyProductAttribute("MINIMAL-API-TESTE")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MINIMAL-API-TESTE")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
