@@ -275,7 +275,7 @@ app.MapGet("/administradores", (int pagina, string? nome, string? perfil, IAdmin
     return Results.Ok(new { Total = total, Itens = dto });
 }).RequireAuthorization("ADMIN").WithTags("Administrador");
 #endregion
-// ===== Veículos =====
+
 #region Veículos
 // --- Criar veículo ---
 app.MapPost("/veiculos", (HttpRequest request, VeiculoDTO veiculoDTO, IVeiculo VeiculoService) =>

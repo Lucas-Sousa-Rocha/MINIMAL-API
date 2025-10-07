@@ -1,0 +1,56 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\kukut\\Documents\\GitHub\\MINIMAL-API\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{51A49DBE-2335-4516-ADAB-9159CF7F2537}|..\\MINIMAL-API-TESTE\\MINIMAL-API-TESTE.csproj|c:\\users\\kukut\\documents\\github\\minimal-api-teste\\veiculostest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{51A49DBE-2335-4516-ADAB-9159CF7F2537}|..\\MINIMAL-API-TESTE\\MINIMAL-API-TESTE.csproj|c:\\users\\kukut\\documents\\github\\minimal-api-teste\\administradortest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "VeiculosTest.cs",
+              "DocumentMoniker": "C:\\Users\\kukut\\Documents\\GitHub\\MINIMAL-API-TESTE\\VeiculosTest.cs",
+              "RelativeDocumentMoniker": "..\\MINIMAL-API-TESTE\\VeiculosTest.cs",
+              "ToolTip": "C:\\Users\\kukut\\Documents\\GitHub\\MINIMAL-API-TESTE\\VeiculosTest.cs",
+              "RelativeToolTip": "..\\MINIMAL-API-TESTE\\VeiculosTest.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAAAAwAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-07T17:06:04.967Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AdministradorTest.cs",
+              "DocumentMoniker": "C:\\Users\\kukut\\Documents\\GitHub\\MINIMAL-API-TESTE\\AdministradorTest.cs",
+              "RelativeDocumentMoniker": "..\\MINIMAL-API-TESTE\\AdministradorTest.cs",
+              "ToolTip": "C:\\Users\\kukut\\Documents\\GitHub\\MINIMAL-API-TESTE\\AdministradorTest.cs",
+              "RelativeToolTip": "..\\MINIMAL-API-TESTE\\AdministradorTest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-07T16:57:00.442Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
