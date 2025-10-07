@@ -10,5 +10,6 @@ namespace MINIMAL_API.Dominio.Interfaces
        void AtualizarAdministrador(Administrador administrador);
        List<Administrador> Todos(int pagina, string? nome = null, string? perfil = null);
        Administrador? BuscaPorID(int id);
+       Administrador BuscaPorEmail(string email);
     }
 }

@@ -29,23 +29,5 @@ namespace MINIMAL_API.Infraestrutura.Db
         public DbSet<Administrador> Administradores { get; set; } = default!;
         public DbSet<Veiculo> Veiculos { get; set; } = default!;
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            // Configura DataCriacao para ser gerado automaticamente pelo banco
-            modelBuilder.Entity<Administrador>()
-                .Property(a => a.DataCriacao)
-                .HasDefaultValueSql("GETUTCDATE()");
-
-            modelBuilder.Entity<Administrador>().HasData(
-                new Administrador
-                {
-                    Id = 1,
-                    Nome = "Admin",
-                    Email = "admin@mail.com",
-                    Senha = "123456",
-                    Perfil = Enums.Perfil.ADMIN,
-                }
-                );
-        }
     }
 }

@@ -17,7 +17,7 @@ namespace MINIMAL_API.Dominio.Entidades
         [MaxLength(100)]
         public string Email { get; set; } = default!;
         [Required]
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string Senha { get; set; } = default!;
         [Required]
         [MaxLength(10)]

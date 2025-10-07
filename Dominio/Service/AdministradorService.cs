@@ -74,5 +74,14 @@ namespace MINIMAL_API.Dominio.Interfaces
         {
             return _contexto.Administradores.FirstOrDefault(a => a.Id == id);
         }
+
+        public Administrador BuscaPorEmail(string email)
+        {
+            var admin = _contexto.Administradores.FirstOrDefault(a => a.Email == email);
+            if (admin == null)
+                throw new KeyNotFoundException("Administrador não encontrado.");
+            return admin;
+        }
+
     }
 }
