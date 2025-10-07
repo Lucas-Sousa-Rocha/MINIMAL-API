@@ -198,4 +198,4 @@ Os testes estão na pasta `MINIMAL_API_TESTE` e utilizam as seguintes biblioteca
 ## 📜 Licença
 
 Este projeto está licenciado sob a licença MIT.  
-Consulte o arquivo [LICENSE](LICENSE.txt) para mais informações.
+Consulte o arquivo [LICENSE](LICENSE) para mais informações.
