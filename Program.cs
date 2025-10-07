@@ -1,6 +1,5 @@
-﻿// ===== Usings necessários =====
+﻿#region Imports
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -14,13 +13,14 @@ using MINIMAL_API.Validator;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+#endregion
 
 // ===== Criar o builder da aplicação =====
 var builder = WebApplication.CreateBuilder(args);
-
 // ===== Configurar JWT =====
+#region Classe de configuração JWT
 var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
-var keyBytes = Encoding.ASCII.GetBytes(jwtSettings.Key);
+var keyBytes = Encoding.ASCII.GetBytes(jwtSettings!.Key);
 
 builder.Services.AddAuthentication(options =>
 {
@@ -46,13 +46,14 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("ADMIN", policy => policy.RequireRole(Perfil.ADMIN.ToString()));
     options.AddPolicy("USER", policy => policy.RequireRole(Perfil.USER.ToString()));
 });
-
+#endregion
 // ===== Registrar serviços =====
+#region Injeção de dependência
 builder.Services.AddScoped<IAdministrador, AdministradorService>();
 builder.Services.AddScoped<IVeiculo, VeiculoService>();
 builder.Services.AddScoped<VeiculoValidador>();
 builder.Services.AddScoped<AdministradorValidator>();
-
+#endregion
 // ===== Swagger com suporte a JWT =====
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -82,14 +83,12 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-
 // ===== Registrar DbContext =====
 builder.Services.AddDbContext<DbContexto>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
-
 var app = builder.Build();
-
+#region Ações iniciais para o BD
 // ===== Cria o usuario master do sistema =====
 using (var scope = app.Services.CreateScope())
 {
@@ -115,7 +114,6 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine("Usuário master já existe, não foi recriado.");
     }
 }
-
 // ===== Teste de conexão com o banco =====
 using (var scope = app.Services.CreateScope())
 {
@@ -129,16 +127,15 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine($"Erro na conexão: {ex.Message}");
     }
 }
-
+#endregion
 // ===== Pipeline =====
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 // ===== Endpoints =====
-
+#region Administradores
 // --- Login e geração de token JWT ---
 app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO,IAdministrador AdministradorService) =>
 {
@@ -250,7 +247,7 @@ app.MapGet("/administradores/{id}", ([FromRoute] int id, IAdministrador Administ
         var admin = AdministradorService.BuscaPorID(id);
         var dto = new AdministradorResponseDTO
         {
-            Nome = admin.Nome,
+            Nome = admin!.Nome,
             Email = admin.Email,
             Perfil = admin.Perfil.ToString()
         };
@@ -277,9 +274,9 @@ app.MapGet("/administradores", (int pagina, string? nome, string? perfil, IAdmin
 
     return Results.Ok(new { Total = total, Itens = dto });
 }).RequireAuthorization("ADMIN").WithTags("Administrador");
-
+#endregion
 // ===== Veículos =====
-
+#region Veículos
 // --- Criar veículo ---
 app.MapPost("/veiculos", (HttpRequest request, VeiculoDTO veiculoDTO, IVeiculo VeiculoService) =>
 {
@@ -326,7 +323,7 @@ app.MapGet("/veiculos/{id}", ([FromRoute] int id, IVeiculo VeiculoService) =>
         var veiculo = VeiculoService.BuscaPorID(id);
         var veiculoDTO = new VeiculoDTO
         {
-            Nome = veiculo.Nome,
+            Nome = veiculo!.Nome,
             Marca = veiculo.Marca,
             Data = veiculo.Data.ToString("yyyy-MM-dd")
         };
@@ -342,7 +339,7 @@ app.MapPut("/veiculos/{id}", (int id, VeiculoDTO veiculoDTO, IVeiculo VeiculoSer
     try
     {
         var veiculo = VeiculoService.BuscaPorID(id);
-        veiculo.Nome = veiculoDTO.Nome;
+        veiculo!.Nome = veiculoDTO.Nome;
         veiculo.Marca = veiculoDTO.Marca;
 
         if (!DateOnly.TryParse(veiculoDTO.Data, out var dataConvertida))
@@ -368,7 +365,7 @@ app.MapDelete("/veiculos/{id}", ([FromRoute] int id, IVeiculo VeiculoService) =>
     catch (ArgumentException ex) { return Results.NotFound(ex.Message); }
     catch (Exception ex) { return Results.Problem($"Erro ao deletar veículo: {ex.Message}"); }
 }).RequireAuthorization("USER").WithTags("Usuario");
-
+#endregion
 // ===== Executar a aplicação =====
 app.UseAuthentication();
 app.UseAuthorization();
